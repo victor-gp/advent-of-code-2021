@@ -13,13 +13,13 @@ main :-
     read(PrevLangs),
     draw_next(PrevLangs, NextLang),
     write(NextLang).
+*/
 
 draw_next(PrevLangs, NextLang) :-
     random_lang(NextLang),
     satisfies_conditions(PrevLangs, NextLang),
     append(PrevLangs, [NextLang], NewLangs),
     no_dead_end(NewLangs).
-*/
 
 random_lang(Lang) :-
     languages(Langs),
@@ -27,21 +27,20 @@ random_lang(Lang) :-
     member(Lang, Langs2).
 
 satisfies_conditions(PrevLangs, NextLang) :-
-    \+ is_recent(nextLang),
+    \+ is_recent(PrevLangs, NextLang),
     is_within_max_freq_diff(PrevLangs, NextLang),
     is_within_max_uses(PrevLangs, NextLang).
 
-/*
-no_dead_end(Langs) :-
+no_dead_end(Langs) :- % base case
     length(Langs, NDays),
     advent_days(MaxDays),
-    NDays is MaxDays; % base case
-    draw_next(Langs, _). % recursion
-*/
+    NDays is MaxDays, !.
+no_dead_end(Langs) :- % recursive case
+    draw_next(Langs, _).
 
-is_recent(Lang, PrevLangs) :-
+is_recent(PrevLangs, NextLang) :-
     recent(PrevLangs, RecentLangs),
-    member(Lang, RecentLangs).
+    member(NextLang, RecentLangs).
 
 recent(PrevLangs, RecentLangs) :-
     no_repeat_before(MaxNRecent),
