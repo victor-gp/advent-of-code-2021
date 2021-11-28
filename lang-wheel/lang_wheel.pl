@@ -18,7 +18,7 @@ draw_next(PrevLangs, NextLang) :-
     random_lang(NextLang),
     satisfies_conditions(PrevLangs, NextLang),
     append(PrevLangs, [NextLang], NewLangs),
-    \+ dead_end(NewLangs).
+    no_dead_end(NewLangs).
 */
 
 random_lang(Lang) :-
@@ -32,10 +32,11 @@ satisfies_conditions(PrevLangs, NextLang) :-
     is_within_max_freq_diff(),
     is_within_max_uses(PrevLangs, NextLang).
 
-dead_end(Langs) :-
+no_dead_end(Langs) :-
     length(Langs, NDays),
     advent_days(MaxDays),
-    NDays is MaxDays; draw_next(Langs, _).
+    NDays is MaxDays; % base case
+    draw_next(Langs, _). % recursion
 */
 
 is_recent(Lang, PrevLangs) :-
@@ -43,16 +44,16 @@ is_recent(Lang, PrevLangs) :-
     member(Lang, RecentLangs).
 
 recent(PrevLangs, RecentLangs) :-
-    no_repeat_before(MaxRecent),
+    no_repeat_before(MaxNRecent),
     length(PrevLangs, NPrevLangs),
-    NRecent is min(MaxRecent, NPrevLangs),
-    append(_, RecentLangs, PrevLangs),
-    length(RecentLangs, NRecent).
+    NRecent is min(MaxNRecent, NPrevLangs),
+    length(RecentLangs, NRecent),
+    append(_, RecentLangs, PrevLangs).
 
 is_within_max_uses(PrevLangs, NextLang) :-
     max_uses(MaxUses),
     append(PrevLangs, [NextLang], NewLangs),
-    bagof(use, member(NextLang, NewLangs), Uses),
+    bagof(NextLang-use, member(NextLang, NewLangs), Uses),
     length(Uses, NUses),
     NUses =< MaxUses.
 
