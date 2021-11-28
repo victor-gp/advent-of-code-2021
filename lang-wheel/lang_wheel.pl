@@ -29,9 +29,8 @@ random_lang(Lang) :-
 /*
 satisfies_conditions(PrevLangs, NextLang) :-
     \+ is_recent(nextLang),
-    append(PrevLangs, [NextLang], NewLangs),
     is_within_max_freq_diff(),
-    is_within_max_uses().
+    is_within_max_uses(PrevLangs, NextLang).
 
 dead_end(Langs) :-
     length(Langs, NDays),
@@ -49,6 +48,13 @@ recent(PrevLangs, RecentLangs) :-
     NRecent is min(MaxRecent, NPrevLangs),
     append(_, RecentLangs, PrevLangs),
     length(RecentLangs, NRecent).
+
+is_within_max_uses(PrevLangs, NextLang) :-
+    max_uses(MaxUses),
+    append(PrevLangs, [NextLang], NewLangs),
+    bagof(use, member(NextLang, NewLangs), Uses),
+    length(Uses, NUses),
+    NUses =< MaxUses.
 
 max_uses(N) :-
     advent_days(NDays),
