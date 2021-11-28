@@ -26,12 +26,12 @@ random_lang(Lang) :-
     random_permutation(Langs, Langs2), % matches only once
     member(Lang, Langs2).
 
-/*
 satisfies_conditions(PrevLangs, NextLang) :-
     \+ is_recent(nextLang),
-    is_within_max_freq_diff(),
+    is_within_max_freq_diff(PrevLangs, NextLang),
     is_within_max_uses(PrevLangs, NextLang).
 
+/*
 no_dead_end(Langs) :-
     length(Langs, NDays),
     advent_days(MaxDays),
@@ -50,11 +50,31 @@ recent(PrevLangs, RecentLangs) :-
     length(RecentLangs, NRecent),
     append(_, RecentLangs, PrevLangs).
 
+is_within_max_freq_diff(PrevLangs, NextLang) :-
+    \+ is_above_max_freq_diff(PrevLangs, NextLang).
+
+is_above_max_freq_diff(PrevLangs, NextLang) :-
+    max_freq_diff(MaxFreqDiff),
+    append(PrevLangs, [NextLang], NewLangs),
+    uses_of(NewLangs, NextLang, NextFreq),
+    dif(OtherLang, NextLang),
+    lang_freq(NewLangs, OtherLang, OtherFreq),
+    NextFreq - OtherFreq > MaxFreqDiff.
+
+uses_of(Langs, Lang, NUses) :-
+    bagof(Lang-use, member(Lang, Langs), Uses),
+    length(Uses, NUses), !;
+    NUses is 0. % bagof fails on no occurrences
+
+lang_freq(Langs, Lang, Freq) :-
+    languages(AllLangs),
+    member(Lang, AllLangs),
+    uses_of(Langs, Lang, Freq).
+
 is_within_max_uses(PrevLangs, NextLang) :-
     max_uses(MaxUses),
     append(PrevLangs, [NextLang], NewLangs),
-    bagof(NextLang-use, member(NextLang, NewLangs), Uses),
-    length(Uses, NUses),
+    uses_of(NewLangs, NextLang, NUses),
     NUses =< MaxUses.
 
 max_uses(N) :-
