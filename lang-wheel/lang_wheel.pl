@@ -1,19 +1,23 @@
-% configuration, user-defined parameters
+:- set_prolog_flag(double_quotes, chars).
+:- use_module(library(pio)).
 
+
+%%% configuration, user-defined parameters
+
+calendar_file('lang-calendar.txt').
 languages([haskell, python, ruby, rust, scala]).
 advent_days(25).
 no_repeat_before(2). % min days before repeating a language
 max_freq_diff(2). % max difference between most/least used languages at any moment
 % max_uses is derived from languages' length %nice: make it configurable?
 
-% configuration end
+%%% configuration end
 
-/*
+
 main :-
-    read(PrevLangs),
+    read_calendar(PrevLangs),
     draw_next(PrevLangs, NextLang),
-    write(NextLang).
-*/
+    write_to_calendar(PrevLangs, NextLang).
 
 draw_next(PrevLangs, NextLang) :-
     random_lang(NextLang),
@@ -81,3 +85,42 @@ max_uses(N) :-
     languages(Langs),
     length(Langs, NLangs),
     N is ceiling(NDays rdiv NLangs).
+
+
+%%% io
+
+% DCG for lang-calendar.txt
+lines([])     --> call(eos), !.
+lines([L|Ls]) --> line(_, L), lines(Ls).
+line_term()     --> ( `\n` | call(eos) ).
+line(Day, Lang) --> `day `, token(Day), `: `, token(Lang), line_term(), !.
+token([])     --> [].
+token([C|Cs]) --> [C], token(Cs).
+eos([], []).
+
+read_calendar(Langs) :-
+    calendar_file(CalFile),
+    see(CalFile),
+    phrase_from_file(lines(LangsChars), CalFile),
+    maplist(atom_chars, Langs, LangsChars),
+    seen.
+
+line_chars(Day, Lang) --> "day ", token(Day), ": ", token(Lang), "\n".
+
+write_to_calendar(PrevLangs, NextLang) :-
+    next_day(PrevLangs, NextDay),
+    next_line(NextDay, NextLang, NextLineStr),
+    calendar_file(CalFile),
+    append(CalFile),
+    write(NextLineStr),
+    told.
+
+next_day(PrevLangs, NextDay) :-
+    length(PrevLangs, CurrentDay),
+    NextDay is CurrentDay + 1.
+
+next_line(NextDay, NextLang, NextLineStr) :-
+    atom_chars(NextDay, NextDayChars),
+    atom_chars(NextLang, NextLangChars),
+    phrase(line_chars(NextDayChars, NextLangChars), NextLineChars),
+    string_chars(NextLineStr, NextLineChars).
