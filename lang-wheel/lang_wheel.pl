@@ -10,9 +10,12 @@ calendar_file('lang-calendar.txt').
 languages([haskell, python, ruby, rust, scala]).
 advent_days(25).
 
-no_repeat_before(2). % min days before repeating a language
-max_freq_diff(2). % max difference between most/least used languages at any moment
-% max_uses is derived from languages' length %nice: make it configurable?
+no_repeat_before(2).  % min days before repeating a language
+max_freq_diff(2).  % max difference between most/least used languages at any moment
+
+% uncomment and replace N to configure, default = ⌈advent_days / nlanguages⌉
+% :- discontiguous max_uses/1.
+% max_uses(N) :- !.  % max times a language can be used
 
 %%% configuration end
 
@@ -23,6 +26,7 @@ main :-
     write_to_calendar(PrevLangs, NextLang),
     halt(0).
 main :-
+    writeln('lang-wheel: something went wrong'),
     halt(1).
 
 draw_next(PrevLangs, NextLang) :-
