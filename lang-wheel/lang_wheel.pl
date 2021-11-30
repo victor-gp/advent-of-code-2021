@@ -7,6 +7,7 @@
 calendar_file('lang-calendar.txt').
 languages([haskell, python, ruby, rust, scala]).
 advent_days(25).
+
 no_repeat_before(2). % min days before repeating a language
 max_freq_diff(2). % max difference between most/least used languages at any moment
 % max_uses is derived from languages' length %nice: make it configurable?
@@ -21,7 +22,7 @@ main :-
 
 draw_next(PrevLangs, NextLang) :-
     random_lang(NextLang),
-    satisfies_conditions(PrevLangs, NextLang),
+    satisfies_constraints(PrevLangs, NextLang),
     append(PrevLangs, [NextLang], NewLangs),
     no_dead_end(NewLangs).
 
@@ -30,7 +31,7 @@ random_lang(Lang) :-
     random_permutation(Langs, Langs2), % matches only once
     member(Lang, Langs2).
 
-satisfies_conditions(PrevLangs, NextLang) :-
+satisfies_constraints(PrevLangs, NextLang) :-
     \+ is_recent(PrevLangs, NextLang),
     is_within_max_freq_diff(PrevLangs, NextLang),
     is_within_max_uses(PrevLangs, NextLang).
@@ -41,6 +42,9 @@ no_dead_end(Langs) :- % base case
     NDays is MaxDays, !.
 no_dead_end(Langs) :- % recursive case
     draw_next(Langs, _).
+
+
+%%% constraints
 
 is_recent(PrevLangs, NextLang) :-
     recent(PrevLangs, RecentLangs),
@@ -66,8 +70,9 @@ is_above_max_freq_diff(PrevLangs, NextLang) :-
 
 uses_of(Langs, Lang, NUses) :-
     bagof(Lang-use, member(Lang, Langs), Uses),
-    length(Uses, NUses), !;
-    NUses is 0. % bagof fails on no occurrences
+    length(Uses, NUses), !.
+uses_of(_, _, NUses) :- % bagof fails on no occurrences
+    NUses is 0.
 
 lang_freq(Langs, Lang, Freq) :-
     languages(AllLangs),
