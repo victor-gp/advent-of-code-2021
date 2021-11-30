@@ -1,4 +1,6 @@
+:- initialization(main).
 :- set_prolog_flag(double_quotes, chars).
+:- set_prolog_flag(verbose, silent).
 :- use_module(library(pio)).
 
 
@@ -18,7 +20,10 @@ max_freq_diff(2). % max difference between most/least used languages at any mome
 main :-
     read_calendar(PrevLangs),
     draw_next(PrevLangs, NextLang),
-    write_to_calendar(PrevLangs, NextLang).
+    write_to_calendar(PrevLangs, NextLang),
+    halt(0).
+main :-
+    halt(1).
 
 draw_next(PrevLangs, NextLang) :-
     random_lang(NextLang),
