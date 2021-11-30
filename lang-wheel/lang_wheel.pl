@@ -21,6 +21,11 @@ max_freq_diff(2).  % max difference between most/least used languages at any mom
 
 
 main :-
+    read_calendar(Langs),
+    is_complete_calendar(Langs),
+    writeln('lang-wheel: ran out of chocolates :('),
+    halt(0).
+main :-
     read_calendar(PrevLangs),
     draw_next(PrevLangs, NextLang),
     write_to_calendar(PrevLangs, NextLang),
@@ -46,11 +51,14 @@ satisfies_constraints(PrevLangs, NextLang) :-
     is_within_max_uses(PrevLangs, NextLang).
 
 no_dead_end(Langs) :- % base case
-    length(Langs, NDays),
-    advent_days(MaxDays),
-    NDays is MaxDays, !.
+    is_complete_calendar(Langs).
 no_dead_end(Langs) :- % recursive case
     draw_next(Langs, _).
+
+is_complete_calendar(Langs) :-
+    length(Langs, NDays),
+    advent_days(MaxDays),
+    NDays is MaxDays.
 
 
 %%% constraints
