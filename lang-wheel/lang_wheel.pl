@@ -123,7 +123,8 @@ write_to_calendar(PrevLangs, NextLang) :-
     calendar_file(CalFile),
     append(CalFile),
     write(NextLineStr),
-    told.
+    told,
+    write(NextLineStr). % echo to stdout
 
 next_day(PrevLangs, NextDay) :-
     length(PrevLangs, CurrentDay),
