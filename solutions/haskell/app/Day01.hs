@@ -1,12 +1,23 @@
 module Main where
 
+import System.Environment
+
 main :: IO ()
 main = do
+    argv <- getArgs
+    let arg1 = read $ head argv :: Int
+    let solver = multiplex arg1
     input <- readFile "../../input/day01-in.txt"
     let measurements = map read $ lines input :: [Int]
-    let result = slidingWindowIncreases measurements
+    let result = solver measurements
     print result
     return ()
+
+multiplex arg1 = case arg1 of
+  1 -> depthIncreases
+  2 -> slidingWindowIncreases
+  _ -> error "Santa says: \"there's nothing here, you may want to try on channels 1 or 2.\""
+
 
 depthIncreases :: [Int] -> Int
 depthIncreases measurements = foldl accumulateIncreases 0 mPairs
