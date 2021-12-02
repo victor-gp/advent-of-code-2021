@@ -1,8 +1,9 @@
 cabal-version:      3.0
-name:               advent-of-code2021
+name:               AdventOfCode2021Haskell
 version:            0.1.0.0
 synopsis:           Disjointed Haskell solutions for Advent of Code 2021
 description:        Released on an unsuspecting world.
+                    Run the solutions with `$ cabal run dayXX PART`.
 homepage:           https://github.com/victor-gp/advent-of-code-2021
 license:            MIT
 author:             Víctor González Prieto

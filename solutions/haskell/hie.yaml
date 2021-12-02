@@ -1,3 +1,4 @@
+# this is boilerplate for VSCode to pick up the Haskell Language Server installation
 cradle:
   cabal:
     - path: "app/Day01.hs"

@@ -1,0 +1,10 @@
+[package]
+name = "advent-of-code-2021-rust"
+version = "0.1.0"
+authors = ["Víctor González Prieto <victor.gp.dev@gmail.com>"]
+edition = "2021"
+description = "Disjointed Rust solutions for Advent of Code 2021. Run them with `$ cargo run --bin dayXX PART`."
+repository = "https://github.com/victor-gp/advent-of-code-2021"
+license = "MIT"
+
+[dependencies]
