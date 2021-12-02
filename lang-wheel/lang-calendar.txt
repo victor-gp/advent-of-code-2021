@@ -1,1 +1,2 @@
 day 1: haskell
+day 2: rust
