@@ -13,14 +13,26 @@ fn main() -> Result<(), Box<dyn Error>> {
             .parse::<Command>()
             .expect("error when parsing a Command str")
     });
+    part2(commands_iter);
+    Ok(())
+}
 
+fn part1(commands_iter: impl Iterator<Item=Command>) {
     let starting_pos = Position { horizontal: 0, depth: 0 };
     let eval_cmd = |pos: Position, cmd| pos.after_command(&cmd);
     let final_pos = commands_iter.fold(starting_pos, eval_cmd);
 
     eprintln!("final position: {:?}", final_pos);
     println!("{}", final_pos.horizontal * final_pos.depth);
-    Ok(())
+}
+
+fn part2(commands_iter: impl Iterator<Item=Command>) {
+    let starting_state = State { horizontal: 0, depth: 0, aim: 0 };
+    let eval_cmd = |state: State, cmd| state.after_command(&cmd);
+    let final_state = commands_iter.fold(starting_state, eval_cmd);
+
+    eprintln!("final state: {:?}", final_state);
+    println!("{}", final_state.horizontal * final_state.depth);
 }
 
 type Units = u32;
@@ -31,6 +43,13 @@ struct Position {
     depth: Units,
 }
 
+#[derive(Debug)]
+struct State {
+    horizontal: Units,
+    depth: Units,
+    aim: Units,
+}
+
 enum Command {
     Forward(Units),
     Down(Units),
@@ -38,19 +57,39 @@ enum Command {
 }
 
 impl Position {
-    fn after_command(&self, cmd: &Command) -> Position {
+    fn after_command(self, cmd: &Command) -> Position {
         match cmd {
             Command::Forward(units) => Position {
                 horizontal: self.horizontal + units,
-                ..*self
+                ..self
             },
             Command::Down(units) => Position {
                 depth: self.depth + units,
-                ..*self
+                ..self
             },
             Command::Up(units) => Position {
                 depth: self.depth - units,
-                ..*self
+                ..self
+            },
+        }
+    }
+}
+
+impl State {
+    fn after_command(self, cmd: &Command) -> State {
+        match cmd {
+            Command::Forward(units) => State {
+                horizontal: self.horizontal + units,
+                depth: self.depth + self.aim * units,
+                ..self
+            },
+            Command::Down(units) => State {
+                aim: self.aim + units,
+                ..self
+            },
+            Command::Up(units) => State {
+                aim: self.aim - units,
+                ..self
             },
         }
     }
