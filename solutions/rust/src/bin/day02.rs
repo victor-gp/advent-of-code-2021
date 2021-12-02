@@ -1,11 +1,14 @@
 // https://adventofcode.com/2021/day/2
 
+use std::env;
 use std::error::Error;
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
 use std::str::FromStr;
 
 fn main() -> Result<(), Box<dyn Error>> {
+    let argv: Vec<String> = env::args().collect();
+    let arg1 = argv[1].parse::<u8>()?;
     let input_file = File::open("../../input/day02-in.txt")?;
     let input_reader = BufReader::new(input_file);
     let commands_iter = input_reader.lines().map(|line| {
@@ -13,11 +16,17 @@ fn main() -> Result<(), Box<dyn Error>> {
             .parse::<Command>()
             .expect("error when parsing a Command str")
     });
-    part2(commands_iter);
+    if arg1 == 1 {
+        part1(commands_iter);
+    } else if arg1 == 2 {
+        part2(commands_iter);
+    } else {
+        eprintln!("Santa says: \"there's nothing here, you may want to try on channels 1 or 2.\"")
+    }
     Ok(())
 }
 
-fn part1(commands_iter: impl Iterator<Item=Command>) {
+fn part1(commands_iter: impl Iterator<Item = Command>) {
     let starting_pos = Position { horizontal: 0, depth: 0 };
     let eval_cmd = |pos: Position, cmd| pos.after_command(&cmd);
     let final_pos = commands_iter.fold(starting_pos, eval_cmd);
@@ -26,7 +35,7 @@ fn part1(commands_iter: impl Iterator<Item=Command>) {
     println!("{}", final_pos.horizontal * final_pos.depth);
 }
 
-fn part2(commands_iter: impl Iterator<Item=Command>) {
+fn part2(commands_iter: impl Iterator<Item = Command>) {
     let starting_state = State { horizontal: 0, depth: 0, aim: 0 };
     let eval_cmd = |state: State, cmd| state.after_command(&cmd);
     let final_state = commands_iter.fold(starting_state, eval_cmd);
