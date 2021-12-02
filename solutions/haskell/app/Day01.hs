@@ -1,3 +1,5 @@
+-- https://adventofcode.com/2021/day/1
+
 module Main where
 
 import System.Environment
@@ -6,17 +8,17 @@ main :: IO ()
 main = do
     argv <- getArgs
     let arg1 = read $ head argv :: Int
-    let solver = multiplex arg1
+    let solve = multiplex arg1
     input <- readFile "../../input/day01-in.txt"
     let measurements = map read $ lines input :: [Int]
-    let result = solver measurements
+    let result = solve measurements
     print result
     return ()
 
 multiplex arg1 = case arg1 of
-  1 -> depthIncreases
-  2 -> slidingWindowIncreases
-  _ -> error "Santa says: \"there's nothing here, you may want to try on channels 1 or 2.\""
+    1 -> depthIncreases
+    2 -> slidingWindowIncreases
+    _ -> error "Santa says: \"there's nothing here, you may want to try on channels 1 or 2.\""
 
 
 depthIncreases :: [Int] -> Int
@@ -30,7 +32,8 @@ accumulateIncreases acc (pre, post)
     | otherwise  = acc
 
 slidingWindowIncreases :: [Int] -> Int
-slidingWindowIncreases measurements = depthIncreases mWindowSums
-  where
-    mWindows = zip3 measurements (tail measurements) (drop 2 measurements)
-    mWindowSums = map (\(a, b, c) -> a + b + c) mWindows
+slidingWindowIncreases = depthIncreases . slidingSums
+
+slidingSums :: [Int] -> [Int]
+slidingSums (a:b:c:ms) = (a + b + c) : slidingSums(b:c:ms)
+slidingSums _ = []
