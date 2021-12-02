@@ -6,10 +6,10 @@ use std::fs::File;
 use std::io::{prelude::*, BufReader};
 use std::str::FromStr;
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() {
     let argv: Vec<String> = env::args().collect();
-    let arg1 = argv[1].parse::<u8>()?;
-    let input_file = File::open("../../input/day02-in.txt")?;
+    let arg1 = argv[1].parse::<u8>().expect("error parsing argv[1]");
+    let input_file = File::open("../../input/day02-in.txt").expect("error opening input file");
     let input_reader = BufReader::new(input_file);
     let commands_iter = input_reader.lines().map(|line| {
         line.expect("error when unwrapping a line")
@@ -23,7 +23,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     } else {
         eprintln!("Santa says: \"there's nothing here, you may want to try on channels 1 or 2.\"")
     }
-    Ok(())
 }
 
 fn part1(commands_iter: impl Iterator<Item = Command>) {
@@ -114,7 +113,7 @@ impl FromStr for Command {
             "forward" => Command::Forward(units),
             "down" => Command::Down(units),
             "up" => Command::Up(units),
-            _ => panic!("Unrecognized command verb"), // nice: change to error
+            _ => panic!("unrecognized command verb"),
         };
         Ok(command)
     }
