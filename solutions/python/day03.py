@@ -6,25 +6,26 @@ from typing import TypeAlias, Callable
 
 with open("../../input/day03-in.txt") as f:
     input: str = f.read()
-binary_codes = input.splitlines()
+binary_numbers = input.splitlines()
 
 
-def gamma_rate_bin(binary_codes: list[str]) -> str:
-    bit_len = len(binary_codes[0])
+def gamma_rate_bin(binary_numbers: list[str]) -> str:
+    bit_len = len(binary_numbers[0])
     counts = [0] * bit_len
-    for binary_code in binary_codes:
-        bits_i = [int(bit_s) for bit_s in binary_code]
+    for bin_num in binary_numbers:
+        bits_i = [int(bit_s) for bit_s in bin_num]
         counts = [sum(i) for i in zip(counts, bits_i)]
+
     def most_common(count: int) -> str:
         # in case of tie, criterion bit is 1 for oxygen_gen
         # epsilon_rate_bin negates that, which just suits co2_scrub
-        return "0" if count < len(binary_codes) / 2 else "1"
+        return "0" if count < len(binary_numbers) / 2 else "1"
     gamma_bits = map(most_common, counts)
     return "".join(gamma_bits)
 
 
-def epsilon_rate_bin(binary_codes: list[str]) -> str:
-    gamma_bin = gamma_rate_bin(binary_codes)
+def epsilon_rate_bin(binary_numbers: list[str]) -> str:
+    gamma_bin = gamma_rate_bin(binary_numbers)
     epsilon_bits = map(negate, gamma_bin)
     return "".join(epsilon_bits)
 
@@ -32,10 +33,10 @@ def negate(bit: str) -> str:
     return "0" if bit == "1" else "1"
 
 
-def part1(binary_codes: list[str]) -> None:
-    gamma_bin = gamma_rate_bin(binary_codes)
+def part1(binary_numbers: list[str]) -> None:
+    gamma_bin = gamma_rate_bin(binary_numbers)
     print(f"gamma rate binary: {gamma_bin}", file=stderr)
-    epsilon_bin = epsilon_rate_bin(binary_codes)
+    epsilon_bin = epsilon_rate_bin(binary_numbers)
     print(f"epsilon rate binary: {epsilon_bin}", file=stderr)
 
     gamma_rate = int(gamma_bin, 2)
@@ -46,31 +47,31 @@ def part1(binary_codes: list[str]) -> None:
 
 criteria_fn: TypeAlias = Callable[[list[str], int], str]
 
-def find_value(bit_criteria: criteria_fn, binary_codes: list[str]) -> str:
-    binary_codes = deepcopy(binary_codes)
-    bit_len = len(binary_codes[0])
+def find_value(bit_criteria: criteria_fn, binary_numbers: list[str]) -> str:
+    binary_numbers = deepcopy(binary_numbers)
+    bit_len = len(binary_numbers[0])
     for i in range(bit_len):
-        criterion_bit = bit_criteria(binary_codes, i)
-        binary_codes = list(filter(
-            lambda bin_code: bin_code[i] == criterion_bit,
-            binary_codes
+        criterion_bit = bit_criteria(binary_numbers, i)
+        binary_numbers = list(filter(
+            lambda bin_num: bin_num[i] == criterion_bit,
+            binary_numbers
         ))
-        if len(binary_codes) == 1:
-            return binary_codes[0]
+        if len(binary_numbers) == 1:
+            return binary_numbers[0]
     raise Exception("not found")
 
 
-def oxygen_gen_criteria(binary_codes: list[str], i: int) -> str:
-    return gamma_rate_bin(binary_codes)[i]
+def oxygen_gen_criteria(binary_numbers: list[str], i: int) -> str:
+    return gamma_rate_bin(binary_numbers)[i]
 
-def co2_scrub_criteria(binary_codes: list[str], i: int) -> str:
-    return epsilon_rate_bin(binary_codes)[i]
+def co2_scrub_criteria(binary_numbers: list[str], i: int) -> str:
+    return epsilon_rate_bin(binary_numbers)[i]
 
 
-def part2(binary_codes: list[str]) -> None:
-    oxygen_bin = find_value(oxygen_gen_criteria, binary_codes)
+def part2(binary_numbers: list[str]) -> None:
+    oxygen_bin = find_value(oxygen_gen_criteria, binary_numbers)
     print(oxygen_bin, file=stderr)
-    co2_bin = find_value(co2_scrub_criteria, binary_codes)
+    co2_bin = find_value(co2_scrub_criteria, binary_numbers)
     print(co2_bin, file=stderr)
 
     oxygen_generator_rating = int(oxygen_bin, 2)
@@ -86,9 +87,9 @@ if len(argv) != 2:  # 0 is prog_name
     print(bad_argc, file=stderr)
     exit(2)
 elif int(argv[1]) == 1:
-    part1(binary_codes)
+    part1(binary_numbers)
 elif int(argv[1]) == 2:
-    part2(binary_codes)
+    part2(binary_numbers)
 else:
     print(bad_arg1, file=stderr)
     exit(2)
