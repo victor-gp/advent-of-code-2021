@@ -3,3 +3,8 @@
 dist-newstyle/
 # rust
 target/
+# scala
+target/
+.metals/
+.bloop/
+metals.sbt
