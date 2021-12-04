@@ -1,3 +1,4 @@
 day 1: haskell
 day 2: rust
 day 3: python
+day 4: scala
