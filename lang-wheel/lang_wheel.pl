@@ -3,6 +3,8 @@
 :- set_prolog_flag(verbose, silent).
 :- use_module(library(pio)).
 
+% beware, you need to run/load this program from the same directory!
+
 
 %%% configuration, user-defined parameters
 
