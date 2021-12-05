@@ -1,3 +1,5 @@
+// https://adventofcode.com/2021/day/4
+
 import scala.io.Source
 import scala.collection.immutable.HashMap
 import scala.collection.mutable.ArraySeq
