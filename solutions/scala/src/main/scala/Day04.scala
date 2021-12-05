@@ -11,8 +11,13 @@ import scala.collection.mutable.ArraySeq
   val blocks = input.split("\n\n")
   val numbers = blocks.head.split(',').toList.map(_.toInt)
   val boards = blocks.toList.tail.map(BingoBoard.fromString(_))
-  part1(numbers, boards)
 
+  part match
+    case 1 => part1(numbers, boards)
+    case 2 => part2(numbers, boards)
+    case _ => print(santa_says)
+
+val santa_says = "Santa says: \"there\'s nothing here, you may want to try on channels 1 or 2.\""
 
 def part1(numbers: List[Int], boards: List[BingoBoard]): Unit =
   val (winningBoard, bingoNum) = play(boards, numbers)
@@ -20,13 +25,30 @@ def part1(numbers: List[Int], boards: List[BingoBoard]): Unit =
 
 def play(boards: List[BingoBoard], numbers: List[Int]): (BingoBoard, Int) =
   val nextNum = numbers.head
-  val containing = boards.filter(_.contains(nextNum))
-  containing.foreach(_.markNumber(nextNum))
+  val includingNum = boards.filter(_.includes(nextNum))
+  includingNum.foreach(_.markNumber(nextNum))
 
-  val winnerOpt = containing.find(_.hasWonAfter(nextNum))
+  val winnerOpt = includingNum.find(_.hasWonAfter(nextNum))
   winnerOpt match
     case Some(winner) => (winner, nextNum)
     case None => play(boards, numbers.tail)
+
+
+def part2(numbers: List[Int], boards: List[BingoBoard]): Unit =
+  val (losingBoard, bingoNum) = playToLose(boards, numbers)
+  println(losingBoard.score(bingoNum))
+
+def playToLose(boards: List[BingoBoard], numbers: List[Int]): (BingoBoard, Int) =
+  val nextNum = numbers.head
+  val includingNum = boards.filter(_.includes(nextNum))
+  includingNum.foreach(_.markNumber(nextNum))
+  val complete = includingNum.filter(_.hasWonAfter(nextNum))
+  val incomplete = boards.filter(! complete.contains(_))
+
+  if incomplete.length == 0 then
+    (complete.head, nextNum)
+  else
+    playToLose(incomplete, numbers.tail)
 
 
 type Pos2D = (Int, Int)
@@ -35,21 +57,22 @@ type Grid[T] = ArraySeq[ArraySeq[T]]
 class BingoBoard(val numToPos: HashMap[Int, Pos2D], var marked: Grid[Boolean]):
   import BingoBoard.*
 
-  def contains(num: Int): Boolean = numToPos.contains(num)
+  def includes(num: Int): Boolean = numToPos.contains(num)
 
-  // pre: the board contains num
+  // pre: the board includes num
   // post: mutates marked
   def markNumber(num: Int): Unit =
     val (row, col) = numToPos(num)
     marked(row)(col) = true
 
+  // pre: the board includes num
   def hasWonAfter(num: Int): Boolean =
     val (row, col) = numToPos(num)
     isCompleteRow(row) || isCompleteColumn(col)
 
   def isCompleteRow(row: Int): Boolean = marked(row).forall(_ == true)
 
-  def isCompleteColumn(col: Int): Boolean = false //todo
+  def isCompleteColumn(col: Int): Boolean = marked.map(_(col)).forall(_ == true)
 
   def score(bingoNum: Int): Int =
     val unmarkedNums =
