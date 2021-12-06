@@ -5,7 +5,7 @@
 require 'set'
 
 def main(part)
-  input = File.open("../../input/day05-in.txt") { |f| f.read }
+  input = File.open('../../input/day05-in.txt', &:read)
   lines = input.lines.map { |line_s| Line.from_s(line_s) }
 
   lines.filter! { |l| !l.diagonal? } if part == 1
@@ -28,11 +28,11 @@ class Line
     @b_coord = b_coord
   end
 
-  def Line.from_s(line_s)
+  def self.from_s(line_s)
     # ex: 88,177 -> 566,655
     coord_s_ary = line_s.split(' -> ')
     a, b = coord_s_ary.map do |coord_s|
-      x, y = coord_s.split(',').map(&:to_i)
+      _x, _y = coord_s.split(',').map(&:to_i)
     end
     Line.new(a, b)
   end
@@ -50,8 +50,8 @@ class Line
   end
 
   def point_set_inner
-    x_range = self.class.range1D(a_coord[0], b_coord[0])
-    y_range = self.class.range1D(a_coord[1], b_coord[1])
+    x_range = self.class.range_1D(a_coord[0], b_coord[0])
+    y_range = self.class.range_1D(a_coord[1], b_coord[1])
     Set.new(
       if diagonal? # both ranges are of the same length
         x_range.zip(y_range)
@@ -61,7 +61,7 @@ class Line
     )
   end
 
-  def Line.range1D(a, b)
+  def self.range_1D(a, b)
     min, max = [a, b].sort
     range = (min..max).to_a
     range.reverse! if min != a
