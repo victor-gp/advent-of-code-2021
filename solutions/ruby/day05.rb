@@ -4,14 +4,12 @@
 
 require 'set'
 
-def main
+def main(part)
   input = File.open("../../input/day05-in.txt") { |f| f.read }
   lines = input.lines.map { |line_s| Line.from_s(line_s) }
-  part1(lines)
-end
 
-def part1(lines)
-  lines.filter! { |l| !l.diagonal? }
+  lines.filter! { |l| !l.diagonal? } if part == 1
+
   line_pairs = lines.product(lines).filter { |l1, l2| l1 != l2 }
   overlap_points =
     line_pairs.inject(Set.new) do |acc, pair|
@@ -71,4 +69,14 @@ class Line
   end
 end
 
-main
+
+bad_argc = 'Santa says: "this program uses a single argument. we give out stars on channels 1 and 2."'
+bad_arg1 = 'Santa says: "there\'s nothing here, you may want to try on channels 1 or 2."'
+
+if ARGV.length != 1
+  abort bad_argc
+elsif ![1, 2].include? ARGV[0].to_i
+  abort bad_arg1
+end
+
+main(ARGV[0].to_i)
