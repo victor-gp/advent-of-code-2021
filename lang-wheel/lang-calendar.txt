@@ -3,3 +3,4 @@ day 2: rust
 day 3: python
 day 4: scala
 day 5: ruby
+day 6: python

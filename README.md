@@ -11,6 +11,7 @@ Written in five languages: Haskell, Python, Ruby, Rust and Scala. Plus a Prolog 
 - day 3: [puzzle](./puzzles.md#----day-3-binary-diagnostic----), [solution.py](./solutions/python/day03.py) :star::star:
 - day 4: [puzzle](./puzzles.md#----day-4-giant-squid----), [solution.scala](./solutions/scala/src/main/scala/Day04.scala) :star::star:
 - day 5: [puzzle](./puzzles.md#----day-5-hydrothermal-venture----), [solution.rb](./solutions/ruby/day05.rb) :star::star:
+- day 6: [puzzle](./puzzles.md#----day-6-lanternfish----)
 
 ## License
 
