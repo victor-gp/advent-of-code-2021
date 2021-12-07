@@ -4,3 +4,4 @@ day 3: python
 day 4: scala
 day 5: ruby
 day 6: python
+day 7: scala
